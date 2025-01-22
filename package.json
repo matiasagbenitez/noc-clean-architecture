@@ -18,8 +18,11 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@types/nodemailer": "^6.4.17",
     "cron": "^3.5.0",
     "dotenv": "^16.4.7",
-    "env-var": "^7.5.0"
+    "env-var": "^7.5.0",
+    "mongoose": "^8.9.5",
+    "nodemailer": "^6.9.16"
   }
 }
