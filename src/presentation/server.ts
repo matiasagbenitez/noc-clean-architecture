@@ -27,7 +27,7 @@ export class Server {
         //         undefined
         //     ).execute(url);
         // });
-        CronService.createJob('*/5 * * * * *', () => {
+        CronService.createJob('*/15 * * * * *', () => {
             new CheckServiceMultiple(
                 [fsLogRepository, mongoLogRepository, postgresLogRepository],
                 undefined,

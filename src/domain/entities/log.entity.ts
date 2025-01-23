@@ -35,7 +35,7 @@ export class LogEntity {
 
     static fromObject(obj: { [key: string]: any }): LogEntity {
         const { message, level, origin, createdAt } = obj;
-        if (!message || !level || !createdAt) throw new Error('Invalid object');
+        // if (!message || !level || !createdAt) throw new Error('Invalid object');
         return new LogEntity({ level, message, origin, createdAt });
     }
 }
