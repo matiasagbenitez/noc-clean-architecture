@@ -1,32 +1,39 @@
-import { LogSeverityLevel } from "../domain/entities/log.entity";
-import { SendEmailLogs } from "../domain/use-cases";
-import { CheckService } from "../domain/use-cases/checks/check-service";
-import { FileSystemDataSource } from "../infrastructure/datasources/file-system.datasource";
-import { MongoLogDatasource } from "../infrastructure/datasources/mongo-log.datasource";
-import { LogRepositoryImpl } from "../infrastructure/repositories/log.repository.impl";
+import { SendEmailLogs, CheckService, CheckServiceMultiple } from "../domain/use-cases";
 import { CronService } from "./cron/cron-service";
 import { EmailService } from "./email/email-service";
 
-const logRepository = new LogRepositoryImpl(
-    // new FileSystemDataSource(),
-    new MongoLogDatasource(),
-);
+// Datasources
+import { FileSystemDataSource, MongoLogDatasource, PostgresLogDatasource } from "../infrastructure/datasources";
+import { LogRepositoryImpl } from "../infrastructure/repositories/log.repository.impl";
+
+// Implementación de los repositorios
+const fsLogRepository = new LogRepositoryImpl(new FileSystemDataSource());
+const mongoLogRepository = new LogRepositoryImpl(new MongoLogDatasource());
+const postgresLogRepository = new LogRepositoryImpl(new PostgresLogDatasource());
+
 const emailService = new EmailService();
 
 export class Server {
-    public static start() {
+    public static async start() {
 
         console.log('Server started');
 
         // * -------- Monitoreo de una URL -------- *
-        // const url = 'https://www.google.com';
-        // CronService.createJob('*/5 * * * * *', () => {
+        const url = 'https://www.google.com';
+        // CronService.createJob('*/15 * * * * *', () => {
         //     new CheckService(
         //         logRepository,
         //         undefined,
         //         undefined
         //     ).execute(url);
         // });
+        CronService.createJob('*/5 * * * * *', () => {
+            new CheckServiceMultiple(
+                [fsLogRepository, mongoLogRepository, postgresLogRepository],
+                undefined,
+                undefined
+            ).execute(url);
+        });
 
         // * -------- Mandar un email -------- *
         // emailService.sendEmail({
